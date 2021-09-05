@@ -635,7 +635,7 @@
                 
                 <h1 id="nominal">nominal<a class="headerlink" href="#nominal" title="Permanent link">&para;</a></h1>
 <h4 id="associations"><code>associations</code><a class="headerlink" href="#associations" title="Permanent link">&para;</a></h4>
-<p><code>associations(dataset, nominal_columns='auto', numerical_columns=None, mark_columns=False, nom_nom_assoc='cramer', num_num_assoc='pearson', bias_correction=True, nan_strategy=_REPLACE, nan_replace_value=_DEFAULT_REPLACE_VALUE, ax=None, figsize=None, annot=True, fmt='.2f', cmap=None, sv_color='silver', cbar=True, vmax=1.0, vmin=None, plot=True, clustering=False, title=None, filename=None)</code></p>
+<p><code>associations(dataset, nominal_columns='auto', numerical_columns=None, mark_columns=False, nom_nom_assoc='cramer', num_num_assoc='pearson', bias_correction=True, nan_strategy=_REPLACE, nan_replace_value=_DEFAULT_REPLACE_VALUE, ax=None, figsize=None, annot=True, fmt='.2f', cmap=None, sv_color='silver', cbar=True, vmax=1.0, vmin=None, plot=True, compute_only=False, clustering=False, title=None, filename=None)</code></p>
 <p>Calculate the correlation/strength-of-association of features in data-set with both categorical and
 continuous features using:
  * Pearson's R for continuous-continuous cases
@@ -769,11 +769,12 @@ is used, 0 otherwise)</p>
 <p><em>Default: True</em></p>
 <p>Plot a heat-map of the correlation matrix. If False, heat-map will still be
 drawn, but not shown. The heat-map's <code>ax</code> is part of this function's output. </p>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>If you have no use of the plot at all, and only require the correlations
-DataFrame, consider using <a href="#compute_associations"><code>compute_associations</code></a> instead.</p>
-</div>
+</li>
+<li>
+<p><strong><code>compute_only</code></strong> : <code>Boolean</code></p>
+<p><em>Default: False</em></p>
+<p>Use this flag only if you have no need of the plotting at all. This skips the entire
+plotting mechanism (similar to the old <code>compute_associations</code> method).</p>
 </li>
 <li>
 <p><strong><code>clustering</code></strong> : <code>Boolean</code> </p>
@@ -828,16 +829,15 @@ Based on <a href="https://github.com/TheLoneNut/CorrelationMatrixClustering/blob
 <hr />
 <h4 id="compute_associations"><code>compute_associations</code><a class="headerlink" href="#compute_associations" title="Permanent link">&para;</a></h4>
 <p><code>compute_associations(dataset, nominal_columns='auto', mark_columns=False, theil_u=False, bias_correction=True, nan_strategy=_REPLACE, nan_replace_value=_DEFAULT_REPLACE_VALUE, clustering=False)</code></p>
+<div class="admonition warning">
+<p class="admonition-title">Deprecation warning</p>
+<p><code>compute_associations</code> is deprecated and will be removed in future versions. Use <code>associations(compute_only=True)['corr']</code>.</p>
+</div>
 <p>Calculate the correlation/strength-of-association of features in data-set with both categorical and
 continuous features using:
  * Pearson's R for continuous-continuous cases
  * Correlation Ratio for categorical-continuous cases
  * Cramer's V or Theil's U for categorical-categorical cases</p>
-<div class="admonition info">
-<p>This is equivalent to executing <code>associations(data, plot=False, ...)['corr']</code>, only
-it skips entirely on the drawing phase of the heat-map (See 
-<a href="https://github.com/shakedzy/dython/issues/49">issue #49</a>).</p>
-</div>
 <ul>
 <li>
 <p><strong><code>dataset</code></strong> : <code>NumPy ndarray / Pandas DataFrame</code></p>
