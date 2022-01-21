@@ -635,7 +635,7 @@
                 
                 <h1 id="nominal">nominal<a class="headerlink" href="#nominal" title="Permanent link">&para;</a></h1>
 <h4 id="associations"><code>associations</code><a class="headerlink" href="#associations" title="Permanent link">&para;</a></h4>
-<p><code>associations(dataset, nominal_columns='auto', numerical_columns=None, mark_columns=False, nom_nom_assoc='cramer', num_num_assoc='pearson', bias_correction=True, nan_strategy=_REPLACE, nan_replace_value=_DEFAULT_REPLACE_VALUE, ax=None, figsize=None, annot=True, fmt='.2f', cmap=None, sv_color='silver', cbar=True, vmax=1.0, vmin=None, plot=True, compute_only=False, clustering=False, title=None, filename=None)</code></p>
+<p><code>associations(dataset, nominal_columns='auto', numerical_columns=None, mark_columns=False,nom_nom_assoc='cramer', num_num_assoc='pearson', nom_num_assoc='correlation_ratio', symmetric_nom_nom=True, symmetric_num_num=True, display_rows='all', display_columns='all', hide_rows=None, hide_columns=None,bias_correction=True, nan_strategy=_REPLACE, nan_replace_value=_DEFAULT_REPLACE_VALUE, ax=None, figsize=None, annot=True, fmt='.2f', cmap=None, sv_color='silver', cbar=True, vmax=1.0, vmin=None, plot=True, compute_only=False, clustering=False, title=None, filename=None)</code></p>
 <p>Calculate the correlation/strength-of-association of features in data-set with both categorical and
 continuous features using:
  * Pearson's R for continuous-continuous cases
@@ -648,47 +648,49 @@ continuous features using:
 </li>
 <li>
 <p><strong><code>nominal_columns</code></strong> : <code>string / list / NumPy ndarray</code></p>
-<p><em>Default = 'auto'</em></p>
+<p><em>Default: 'auto'</em></p>
 <p>Names of columns of the data-set which hold categorical values. Can also be the string 'all' to state that all
-columns are categorical, 'auto' (default) to identify nominal columns automatically, or None to state none are 
+columns are categorical, 'auto' (default) to identify nominal columns automatically, or None to state none are
 categorical. Only used if <code>numerical_columns</code> is <code>None</code>.</p>
 </li>
 <li>
 <p><strong><code>numerical_columns</code></strong> : <code>string / list / NumPy ndarray</code></p>
-<p><em>Default = None</em></p>
-<p>To be used instead of <code>nominal_columns</code>. Names of columns of the data-set 
-which hold numerical values. Can also be the string 'all' to state that 
+<p><em>Default: None</em></p>
+<p>To be used instead of <code>nominal_columns</code>. Names of columns of the data-set
+which hold numerical values. Can also be the string 'all' to state that
 all columns are numerical (equivalent to <code>nominal_columns=None</code>) or
-'auto' to try to identify numerical columns (equivalent to 
+'auto' to try to identify numerical columns (equivalent to
 <code>nominal_columns=auto</code>). If <code>None</code>, <code>nominal_columns</code> is used.</p>
 </li>
 <li>
-<p><strong><code>mark_columns</code></strong> : <code>Boolean</code> </p>
+<p><strong><code>mark_columns</code></strong> : <code>Boolean</code></p>
 <p><em>Default: False</em></p>
-<p>if True, output's columns' names will have a suffix of '(nom)' or '(con)' based on their type (nominal or 
+<p>if True, output's columns' names will have a suffix of '(nom)' or '(con)' based on their type (nominal or
 continuous), as provided by nominal_columns</p>
 </li>
 <li>
-<p><strong><code>nom_nom_assoc</code></strong> : <code>string</code></p>
-<p><em>Default = 'cramer'</em></p>
+<p><strong><code>nom_nom_assoc</code></strong> : <code>callable / string</code></p>
+<p><em>Default: 'cramer'</em></p>
 <div class="admonition info">
 <p class="admonition-title">Method signature change</p>
 <p>This replaces the <code>theil_u</code> flag which was used till version 0.6.6.</p>
 </div>
-<p>Name of nominal-nominal (categorical-categorical) association to use:</p>
+<p>If callable, a function which recieves two <code>pd.Series</code> and returns a single number.</p>
+<p>If string, name of nominal-nominal (categorical-categorical) association to use:</p>
 <ul>
 <li>
 <p><code>cramer</code>: Cramer's V</p>
 </li>
 <li>
-<p><code>theil</code>: Theil's U. When selected, heat-map rows are the provided information (meaning: <span><span class="MathJax_Preview">U = U(col|row)</span><script type="math/tex">U = U(col|row)</script></span>)</p>
+<p><code>theil</code>: Theil's U. When selected, heat-map columns are the provided information (meaning: <span><span class="MathJax_Preview">U = U(row|col)</span><script type="math/tex">U = U(row|col)</script></span>)</p>
 </li>
 </ul>
 </li>
 <li>
-<p><strong><code>num_num_assoc</code></strong> : <code>string</code></p>
-<p><em>Default = 'pearson'</em></p>
-<p>Name of numerical-numerical association to use: </p>
+<p><strong><code>num_num_assoc</code></strong> : <code>callable / string</code></p>
+<p><em>Default: 'pearson'</em></p>
+<p>If callable, a function which recieves two <code>pd.Series</code> and returns a single number.</p>
+<p>If string, name of numerical-numerical association to use:</p>
 <ul>
 <li>
 <p><code>pearson</code>: Pearson's R</p>
@@ -702,73 +704,122 @@ continuous), as provided by nominal_columns</p>
 </ul>
 </li>
 <li>
+<p><strong><code>nom_num_assoc</code></strong> : <code>callable / string</code></p>
+<p><em>Default: 'correlation_ratio'</em></p>
+<p>If callable, a function which recieves two <code>pd.Series</code> and returns a single number.</p>
+<p>If string, name of nominal-numerical association to use:</p>
+<ul>
+<li><code>correlation_ratio</code>: correlation ratio</li>
+</ul>
+</li>
+<li>
+<p><strong><code>symmetric_nom_nom</code></strong> : <code>Boolean</code></p>
+<p><em>Default: True</em></p>
+<p>Relevant only if <code>nom_nom_assoc</code> is a callable. If so, declare whether the function is symmetric (<span><span class="MathJax_Preview">f(x,y) = f(y,x)</span><script type="math/tex">f(x,y) = f(y,x)</script></span>).
+If False, heat-map values should be interpreted as <span><span class="MathJax_Preview">f(row,col)</span><script type="math/tex">f(row,col)</script></span>.</p>
+</li>
+<li>
+<p><strong><code>symmetric_num_num</code></strong> : <code>Boolean</code></p>
+<p><em>Default: True</em></p>
+<p>Relevant only if <code>num_num_assoc</code> is a callable. If so, declare whether the function is symmetric (<span><span class="MathJax_Preview">f(x,y) = f(y,x)</span><script type="math/tex">f(x,y) = f(y,x)</script></span>).
+If False, heat-map values should be interpreted as <span><span class="MathJax_Preview">f(row,col)</span><script type="math/tex">f(row,col)</script></span>. </p>
+</li>
+<li>
+<p><strong><code>display_rows</code></strong> : <code>list / string</code></p>
+<p><em>Default: 'all'</em></p>
+<p>Choose which of the dataset's features will be displyed in the output's
+correlations table rows. If string, can either be a single feature's name or 'all'.
+Only used if <code>hide_rows</code> is <code>None</code>.</p>
+</li>
+<li>
+<p><strong><code>display_columns</code></strong> : <code>list / string</code></p>
+<p><em>Default: 'all'</em></p>
+<p>Choose which of the dataset's features will be displyed in the output's
+correlations table columns. If string, can either be a single feature's name or 'all'.
+Only used if <code>hide_columns</code> is <code>None</code>.</p>
+</li>
+<li>
+<p><strong><code>hide_rows</code></strong> : <code>list / string</code></p>
+<p><em>Default: None</em></p>
+<p>choose which of the dataset's features will not be displyed in the output's
+correlations table rows. If string, must be a single feature's name. If <code>None</code>,
+<code>display_rows</code> is used.</p>
+</li>
+<li>
+<p><strong><code>hide_columns</code></strong> : <code>list / string</code></p>
+<p><em>Default: None</em></p>
+<p>choose which of the dataset's features will not be displyed in the output's
+correlations table columns. If string, must be a single feature's name. If <code>None</code>,
+<code>display_columns</code> is used.</p>
+</li>
+<li>
 <p><strong><code>bias_correction</code></strong> : <code>Boolean</code></p>
-<p><em>Default = True</em></p>
-<p>Use bias correction for Cramer's V from Bergsma and Wicher, Journal of the Korean 
+<p><em>Default: True</em></p>
+<p>Use bias correction for Cramer's V from Bergsma and Wicher, Journal of the Korean
  Statistical Society 42 (2013): 323-328.</p>
 </li>
 <li>
-<p><strong><code>nan_strategy</code></strong> : <code>string</code> </p>
+<p><strong><code>nan_strategy</code></strong> : <code>string</code></p>
 <p><em>Default: 'replace'</em></p>
 <p>How to handle missing values: can be either 'drop_samples' to remove samples with missing values, 'drop_features' to remove features (columns) with missing values, or 'replace' to replace all missing values with the nan_replace_value. Missing values are None and np.nan.</p>
 </li>
 <li>
-<p><strong><code>nan_replace_value</code></strong> : <code>any</code> </p>
+<p><strong><code>nan_replace_value</code></strong> : <code>any</code></p>
 <p><em>Default: 0.0</em></p>
 <p>The value used to replace missing values with. Only applicable when nan_strategy is set to 'replace'</p>
 </li>
 <li>
 <p><strong><code>ax</code></strong> : matplotlib <code>Axe</code></p>
-<p><em>Default = None</em></p>
+<p><em>Default: None</em></p>
 <p>Matplotlib Axis on which the heat-map will be plotted</p>
 </li>
 <li>
 <p><strong><code>figsize</code></strong> : <code>(int,int)</code> or <code>None</code></p>
-<p><em>Default = None</em></p>
+<p><em>Default: None</em></p>
 <p>A Matplotlib figure-size tuple. If <code>None</code>, falls back to Matplotlib's default. Only used if <code>ax=None</code>.</p>
 </li>
 <li>
-<p><strong><code>annot</code></strong> : <code>Boolean</code> </p>
-<p><em>Default = True</em></p>
+<p><strong><code>annot</code></strong> : <code>Boolean</code></p>
+<p><em>Default: True</em></p>
 <p>Plot number annotations on the heat-map</p>
 </li>
 <li>
 <p><strong><code>fmt</code></strong> : <code>string</code></p>
-<p><em>Default = '.2f'</em></p>
+<p><em>Default: '.2f'</em></p>
 <p>String formatting of annotations</p>
 </li>
 <li>
-<p><strong><code>cmap</code></strong> : Matplotlib colormap or <code>None</code> </p>
-<p><em>Default = None</em></p>
+<p><strong><code>cmap</code></strong> : Matplotlib colormap or <code>None</code></p>
+<p><em>Default: None</em></p>
 <p>A colormap to be used for the heat-map. If None, falls back to Seaborn's heat-map default</p>
 </li>
 <li>
 <p><strong><code>sv_color</code></strong> : <code>string</code></p>
-<p><em>Default = 'silver'</em></p>
+<p><em>Default: 'silver'</em></p>
 <p>A Matplotlib color. The color to be used when displaying single-value features over the heat-map</p>
 </li>
 <li>
-<p><strong><code>cbar</code></strong> : <code>Boolean</code> </p>
-<p><em>Default = True</em></p>
+<p><strong><code>cbar</code></strong> : <code>Boolean</code></p>
+<p><em>Default: True</em></p>
 <p>Display heat-map's color-bar</p>
 </li>
 <li>
 <p><strong><code>vmax</code></strong> : <code>float</code></p>
-<p><em>Default = 1.0</em></p>
+<p><em>Default: 1.0</em></p>
 <p>Set heat-map <code>vmax</code> option</p>
 </li>
 <li>
 <p><strong><code>vmin</code></strong> : <code>float</code> or <code>None</code></p>
-<p><em>Default = None</em></p>
-<p>Set heat-map <code>vmin</code> option. If set to <code>None</code>, <code>vmin</code> will be chosen automatically 
-between 0 and -1.0, depending on the types of associations used (-1.0 if Pearson's R 
+<p><em>Default: None</em></p>
+<p>Set heat-map <code>vmin</code> option. If set to <code>None</code>, <code>vmin</code> will be chosen automatically
+between 0 and -1.0, depending on the types of associations used (-1.0 if Pearson's R
 is used, 0 otherwise)</p>
 </li>
 <li>
-<p><strong><code>plot</code></strong> : <code>Boolean</code> </p>
+<p><strong><code>plot</code></strong> : <code>Boolean</code></p>
 <p><em>Default: True</em></p>
 <p>Plot a heat-map of the correlation matrix. If False, heat-map will still be
-drawn, but not shown. The heat-map's <code>ax</code> is part of this function's output. </p>
+drawn, but not shown. The heat-map's <code>ax</code> is part of this function's output.</p>
 </li>
 <li>
 <p><strong><code>compute_only</code></strong> : <code>Boolean</code></p>
@@ -777,18 +828,18 @@ drawn, but not shown. The heat-map's <code>ax</code> is part of this function's 
 plotting mechanism (similar to the old <code>compute_associations</code> method).</p>
 </li>
 <li>
-<p><strong><code>clustering</code></strong> : <code>Boolean</code> </p>
+<p><strong><code>clustering</code></strong> : <code>Boolean</code></p>
 <p><em>Default: False</em></p>
 <p>If True, the computed associations will be sorted into groups by similar correlations</p>
 </li>
 <li>
 <p><strong><code>title</code></strong>: <code>string</code> or <code>None</code></p>
-<p><em>Default = None</em></p>
+<p><em>Default: None</em></p>
 <p>Plotted graph title.</p>
 </li>
 <li>
 <p><strong><code>filename</code></strong>: <code>string</code> or <code>None</code></p>
-<p><em>Default = None</em></p>
+<p><em>Default: None</em></p>
 <p>If not None, plot will be saved to the given file name.</p>
 </li>
 </ul>
@@ -813,117 +864,29 @@ Based on <a href="https://github.com/TheLoneNut/CorrelationMatrixClustering/blob
 <p>A sequence of cluster indexes for sorting. If not present, a clustering is performed.</p>
 </li>
 </ul>
-<p><strong>Returns:</strong> </p>
+<p><strong>Returns:</strong></p>
 <ul>
 <li>a sorted correlation matrix (<code>pd.DataFrame</code>)</li>
 <li>cluster indexes based on the original dataset (<code>list</code>)</li>
 </ul>
-<p><strong>Example:</strong> 
-<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;</span> <span class="n">assoc</span> <span class="o">=</span> <span class="n">associations</span><span class="p">(</span>
+<p><strong>Example:</strong>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">assoc</span> <span class="o">=</span> <span class="n">associations</span><span class="p">(</span>
   <span class="n">customers</span><span class="p">,</span>
   <span class="n">plot</span><span class="o">=</span><span class="kc">False</span>
 <span class="p">)</span>
-<span class="o">&gt;&gt;</span> <span class="n">correlations</span> <span class="o">=</span> <span class="n">assoc</span><span class="p">[</span><span class="s1">&#39;corr&#39;</span><span class="p">]</span>
-<span class="o">&gt;&gt;</span> <span class="n">correlations</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cluster_correlations</span><span class="p">(</span><span class="n">correlations</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">correlations</span> <span class="o">=</span> <span class="n">assoc</span><span class="p">[</span><span class="s1">&#39;corr&#39;</span><span class="p">]</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">correlations</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">cluster_correlations</span><span class="p">(</span><span class="n">correlations</span><span class="p">)</span>
 </code></pre></div></p>
 <hr />
 <h4 id="compute_associations"><code>compute_associations</code><a class="headerlink" href="#compute_associations" title="Permanent link">&para;</a></h4>
-<p><code>compute_associations(dataset, nominal_columns='auto', mark_columns=False, theil_u=False, bias_correction=True, nan_strategy=_REPLACE, nan_replace_value=_DEFAULT_REPLACE_VALUE, clustering=False)</code></p>
 <div class="admonition warning">
-<p class="admonition-title">Deprecation warning</p>
-<p><code>compute_associations</code> is deprecated and will be removed in future versions. Use <code>associations(compute_only=True)['corr']</code>.</p>
+<p class="admonition-title">Deprecated</p>
+<p><code>compute_associations</code> was deprecated and removed. Use <code>associations(compute_only=True)['corr']</code>.</p>
 </div>
-<p>Calculate the correlation/strength-of-association of features in data-set with both categorical and
-continuous features using:
- * Pearson's R for continuous-continuous cases
- * Correlation Ratio for categorical-continuous cases
- * Cramer's V or Theil's U for categorical-categorical cases</p>
-<ul>
-<li>
-<p><strong><code>dataset</code></strong> : <code>NumPy ndarray / Pandas DataFrame</code></p>
-<p>The data-set for which the features' correlation is computed</p>
-</li>
-<li>
-<p><strong><code>nominal_columns</code></strong> : <code>string / list / NumPy ndarray</code></p>
-<p><em>Default = 'auto'</em></p>
-<p>Names of columns of the data-set which hold categorical values. Can also be the string 'all' to state that all
-columns are categorical, 'auto' (default) to identify nominal columns automatically, or None to state none are 
-categorical. Only used if <code>numerical_columns</code> is <code>None</code>.</p>
-</li>
-<li>
-<p><strong><code>numerical_columns</code></strong> : <code>string / list / NumPy ndarray</code></p>
-<p><em>Default = None</em></p>
-<p>To be used instead of <code>nominal_columns</code>. Names of columns of the data-set 
-which hold numerical values. Can also be the string 'all' to state that 
-all columns are numerical (equivalent to <code>nominal_columns=None</code>) or
-'auto' to try to identify numerical columns (equivalent to 
-<code>nominal_columns=auto</code>). If <code>None</code>, <code>nominal_columns</code> is used.</p>
-</li>
-<li>
-<p><strong><code>mark_columns</code></strong> : <code>Boolean</code> </p>
-<p><em>Default: False</em></p>
-<p>if True, output's columns' names will have a suffix of '(nom)' or '(con)' based on there type (eda_tools or continuous), as provided by nominal_columns</p>
-</li>
-<li>
-<p><strong><code>nom_nom_assoc</code></strong> : <code>string</code></p>
-<p><em>Default = 'cramer'</em></p>
-<div class="admonition info">
-<p class="admonition-title">Method signature change</p>
-<p>This replaces the <code>theil_u</code> flag which was used till version 0.6.6.</p>
-</div>
-<p>Name of nominal-nominal (categorical-categorical) association to use:</p>
-<ul>
-<li>
-<p><code>cramer</code>: Cramer's V</p>
-</li>
-<li>
-<p><code>theil</code>: Theil's U. When selected, heat-map rows are the provided information (meaning: <span><span class="MathJax_Preview">U = U(row|col)</span><script type="math/tex">U = U(row|col)</script></span>)</p>
-</li>
-</ul>
-</li>
-<li>
-<p><strong><code>num_num_assoc</code></strong> : <code>string</code></p>
-<p><em>Default = 'pearson'</em></p>
-<p>Name of numerical-numerical association to use: </p>
-<ul>
-<li>
-<p><code>pearson</code>: Pearson's R</p>
-</li>
-<li>
-<p><code>spearman</code>: Spearman's R</p>
-</li>
-<li>
-<p><code>kendall</code>: Kendall's Tau</p>
-</li>
-</ul>
-</li>
-<li>
-<p><strong><code>bias_correction</code></strong> : <code>Boolean</code></p>
-<p><em>Default = True</em></p>
-<p>Use bias correction for Cramer's V from Bergsma and Wicher, Journal of the Korean 
-  Statistical Society 42 (2013): 323-328.</p>
-</li>
-<li>
-<p><strong><code>nan_strategy</code></strong> : <code>string</code> </p>
-<p><em>Default: 'replace'</em></p>
-<p>How to handle missing values: can be either 'drop_samples' to remove samples with missing values, 'drop_features' to remove features (columns) with missing values, or 'replace' to replace all missing values with the nan_replace_value. Missing values are None and np.nan.</p>
-</li>
-<li>
-<p><strong><code>nan_replace_value</code></strong> : <code>any</code> </p>
-<p><em>Default: 0.0</em></p>
-<p>The value used to replace missing values with. Only applicable when nan_strategy is set to 'replace'</p>
-</li>
-<li>
-<p><strong><code>clustering</code></strong> : <code>Boolean</code> </p>
-<p><em>Default: False</em></p>
-<p>If True, the computed associations will be sorted into groups by similar correlations</p>
-</li>
-</ul>
-<p><strong>Returns:</strong> A DataFrame of the correlation/strength-of-association between all features</p>
 <hr />
 <h4 id="conditional_entropy"><code>conditional_entropy</code><a class="headerlink" href="#conditional_entropy" title="Permanent link">&para;</a></h4>
 <p><code>conditional_entropy(x, y, nan_strategy=REPLACE, nan_replace_value=DEFAULT_REPLACE_VALUE, log_base=math.e)</code></p>
-<p>Given measurements <code>x</code> and <code>y</code> of random variables <span><span class="MathJax_Preview">X</span><script type="math/tex">X</script></span> and <span><span class="MathJax_Preview">Y</span><script type="math/tex">Y</script></span>, calculates the conditional entropy of <span><span class="MathJax_Preview">X</span><script type="math/tex">X</script></span> given <span><span class="MathJax_Preview">Y</span><script type="math/tex">Y</script></span>:  </p>
+<p>Given measurements <code>x</code> and <code>y</code> of random variables <span><span class="MathJax_Preview">X</span><script type="math/tex">X</script></span> and <span><span class="MathJax_Preview">Y</span><script type="math/tex">Y</script></span>, calculates the conditional entropy of <span><span class="MathJax_Preview">X</span><script type="math/tex">X</script></span> given <span><span class="MathJax_Preview">Y</span><script type="math/tex">Y</script></span>:</p>
 <div>
 <div class="MathJax_Preview"> S(X|Y) = - \sum_{x,y} p(x,y) \log\frac{p(x,y)}{p(y)} </div>
 <script type="math/tex; mode=display"> S(X|Y) = - \sum_{x,y} p(x,y) \log\frac{p(x,y)}{p(y)} </script>
@@ -939,12 +902,12 @@ all columns are numerical (equivalent to <code>nominal_columns=None</code>) or
 <p>A sequence of measurements</p>
 </li>
 <li>
-<p><strong><code>nan_strategy</code></strong> : <code>string</code> </p>
+<p><strong><code>nan_strategy</code></strong> : <code>string</code></p>
 <p><em>Default: 'replace'</em></p>
 <p>How to handle missing values: can be either 'drop' to remove samples with missing values, or 'replace' to replace all missing values with the nan_replace_value. Missing values are None and np.nan.</p>
 </li>
 <li>
-<p><strong><code>nan_replace_value</code></strong> : <code>any</code> </p>
+<p><strong><code>nan_replace_value</code></strong> : <code>any</code></p>
 <p><em>Default: 0.0</em></p>
 <p>The value used to replace missing values with. Only applicable when nan_strategy is set to 'replace'.</p>
 </li>
@@ -963,7 +926,7 @@ all columns are numerical (equivalent to <code>nominal_columns=None</code>) or
 <div class="MathJax_Preview"> \eta = \sqrt{\frac{\sum_x{n_x (\bar{y}_x - \bar{y})^2}}{\sum_{x,i}{(y_{xi}-\bar{y})^2}}} </div>
 <script type="math/tex; mode=display"> \eta = \sqrt{\frac{\sum_x{n_x (\bar{y}_x - \bar{y})^2}}{\sum_{x,i}{(y_{xi}-\bar{y})^2}}} </script>
 </div>
-<p>where <span><span class="MathJax_Preview">n_x</span><script type="math/tex">n_x</script></span> is the number of observations in category <span><span class="MathJax_Preview">x</span><script type="math/tex">x</script></span>, and we define: </p>
+<p>where <span><span class="MathJax_Preview">n_x</span><script type="math/tex">n_x</script></span> is the number of observations in category <span><span class="MathJax_Preview">x</span><script type="math/tex">x</script></span>, and we define:</p>
 <div>
 <div class="MathJax_Preview">\bar{y}_x = \frac{\sum_i{y_{xi}}}{n_x} , \bar{y} = \frac{\sum_i{n_x \bar{y}_x}}{\sum_x{n_x}}</div>
 <script type="math/tex; mode=display">\bar{y}_x = \frac{\sum_i{y_{xi}}}{n_x} , \bar{y} = \frac{\sum_i{n_x \bar{y}_x}}{\sum_x{n_x}}</script>
@@ -983,12 +946,12 @@ Read more on <a href="https://en.wikipedia.org/wiki/Correlation_ratio">Wikipedia
 <p>A sequence of continuous measurements</p>
 </li>
 <li>
-<p><strong><code>nan_strategy</code></strong> : <code>string</code> </p>
+<p><strong><code>nan_strategy</code></strong> : <code>string</code></p>
 <p><em>Default: 'replace'</em></p>
 <p>How to handle missing values: can be either 'drop' to remove samples with missing values, or 'replace' to replace all missing values with the nan_replace_value. Missing values are None and np.nan.</p>
 </li>
 <li>
-<p><strong><code>nan_replace_value</code></strong> : <code>any</code> </p>
+<p><strong><code>nan_replace_value</code></strong> : <code>any</code></p>
 <p><em>Default: 0.0</em></p>
 <p>The value used to replace missing values with. Only applicable when nan_strategy is set to 'replace'.</p>
 </li>
@@ -1000,6 +963,28 @@ Read more on <a href="https://en.wikipedia.org/wiki/Correlation_ratio">Wikipedia
 <p>Calculates Cramer's V statistic for categorical-categorical association.
 This is a symmetric coefficient: <span><span class="MathJax_Preview">V(x,y) = V(y,x)</span><script type="math/tex">V(x,y) = V(y,x)</script></span>. Read more on <a href="https://en.wikipedia.org/wiki/Cram%C3%A9r%27s_V">Wikipedia</a>.</p>
 <p>Original function taken from <a href="https://stackoverflow.com/a/46498792/5863503">this answer</a> on StackOverflow.</p>
+<div class="admonition info">
+<p class="admonition-title">Cramer's V limitations when applied on skewed or small datasets</p>
+<p>As the Cramer's V measure of association depends directly on the counts of each samples-pair in the data, it tends to be suboptimal when applied on skewed or small datasets.</p>
+<p>Consider each of the following cases, where we would expect Cramer's V to reach a high value, yet this only happens in the first scenario:</p>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">400</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">400</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">100</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cramers_v</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="mf">0.9937374102534072</span>
+
+<span class="c1"># skewed dataset</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">500</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">500</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cramers_v</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="mf">0.4974896903293253</span>
+
+<span class="c1"># very small dataset</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">y</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;X&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">4</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;Y&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="mi">1</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">cramers_v</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+<span class="mf">0.0</span>
+</code></pre></div>
+</div>
 <ul>
 <li>
 <p><strong><code>x</code></strong> : <code>list / NumPy ndarray / Pandas Series</code></p>
@@ -1010,17 +995,17 @@ This is a symmetric coefficient: <span><span class="MathJax_Preview">V(x,y) = V(
 <p>A sequence of categorical measurements</p>
 </li>
 <li>
-<p><strong><code>bias_correction</code></strong> : <code>Boolean</code> </p>
-<p><em>Default = True</em></p>
+<p><strong><code>bias_correction</code></strong> : <code>Boolean</code></p>
+<p><em>Default: True</em></p>
 <p>Use bias correction from Bergsma and Wicher, Journal of the Korean Statistical Society 42 (2013): 323-328.</p>
 </li>
 <li>
-<p><strong><code>nan_strategy</code></strong> : <code>string</code> </p>
+<p><strong><code>nan_strategy</code></strong> : <code>string</code></p>
 <p><em>Default: 'replace'</em></p>
 <p>How to handle missing values: can be either 'drop' to remove samples with missing values, or 'replace' to replace all missing values with the nan_replace_value. Missing values are None and np.nan.</p>
 </li>
 <li>
-<p><strong><code>nan_replace_value</code></strong> : <code>any</code> </p>
+<p><strong><code>nan_replace_value</code></strong> : <code>any</code></p>
 <p><em>Default: 0.0</em></p>
 <p>The value used to replace missing values with. Only applicable when nan_strategy is set to 'replace'.</p>
 </li>
@@ -1033,32 +1018,32 @@ This is a symmetric coefficient: <span><span class="MathJax_Preview">V(x,y) = V(
 but can also be used directly.</p>
 <div class="admonition info">
 <p class="admonition-title">Note:</p>
-<p>This is a shortcut for <code>data_utils.identify_columns_by_type(dataset, include=['object', 'category'])</code> </p>
+<p>This is a shortcut for <code>data_utils.identify_columns_by_type(dataset, include=['object', 'category'])</code></p>
 </div>
 <ul>
 <li><strong><code>dataset</code></strong> : <code>np.ndarray</code> / <code>pd.DataFrame</code></li>
 </ul>
 <p><strong>Returns:</strong> list of categorical columns</p>
 <p><strong>Example:</strong>
-<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;</span> <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;col1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">],</span> <span class="s1">&#39;col2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
-<span class="o">&gt;&gt;</span> <span class="n">identify_nominal_columns</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;col1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">],</span> <span class="s1">&#39;col2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]})</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">identify_nominal_columns</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 <span class="p">[</span><span class="s1">&#39;col1&#39;</span><span class="p">]</span>
 </code></pre></div></p>
 <hr />
 <h4 id="identify_numeric_columns"><code>identify_numeric_columns</code><a class="headerlink" href="#identify_numeric_columns" title="Permanent link">&para;</a></h4>
 <p><code>identify_numeric_columns(dataset)</code></p>
-<p>Given a dataset, identify numeric columns. </p>
+<p>Given a dataset, identify numeric columns.</p>
 <div class="admonition info">
 <p class="admonition-title">Note:</p>
-<p>This is a shortcut for <code>data_utils.identify_columns_by_type(dataset, include=['int64', 'float64'])</code> </p>
+<p>This is a shortcut for <code>data_utils.identify_columns_by_type(dataset, include=['int64', 'float64'])</code></p>
 </div>
 <ul>
 <li><strong><code>dataset</code></strong> : <code>np.ndarray</code> / <code>pd.DataFrame</code></li>
 </ul>
 <p><strong>Returns:</strong> list of numerical columns</p>
 <p><strong>Example:</strong>
-<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;</span> <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;col1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">],</span> <span class="s1">&#39;col2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;col3&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]})</span>
-<span class="o">&gt;&gt;</span> <span class="n">identify_numeric_columns</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><span class="o">&gt;&gt;&gt;</span> <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;col1&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">],</span> <span class="s1">&#39;col2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;col3&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">]})</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">identify_numeric_columns</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
 <span class="p">[</span><span class="s1">&#39;col2&#39;</span><span class="p">,</span> <span class="s1">&#39;col3&#39;</span><span class="p">]</span>
 </code></pre></div></p>
 <hr />
@@ -1089,22 +1074,22 @@ using the following logic:</p>
 <p>Names of columns of the data-set which hold categorical values. Can also be the string 'all' to state that all columns are categorical, 'auto' (default) to identify nominal columns automatically, or None to state none are categorical (nothing happens)</p>
 </li>
 <li>
-<p><strong><code>drop_single_label</code></strong> : <code>Boolean</code> </p>
+<p><strong><code>drop_single_label</code></strong> : <code>Boolean</code></p>
 <p><em>Default: False</em></p>
 <p>If True, nominal columns with a only a single value will be dropped.</p>
 </li>
 <li>
-<p><strong><code>drop_fact_dict</code></strong> : <code>Boolean</code> </p>
+<p><strong><code>drop_fact_dict</code></strong> : <code>Boolean</code></p>
 <p><em>Default: True</em></p>
 <p>If True, the return value will be the encoded DataFrame alone. If False, it will be a tuple of the DataFrame and the dictionary of the binary factorization (originating from pd.factorize)</p>
 </li>
 <li>
-<p><strong><code>nan_strategy</code></strong> : <code>string</code> </p>
+<p><strong><code>nan_strategy</code></strong> : <code>string</code></p>
 <p><em>Default: 'replace'</em></p>
 <p>How to handle missing values: can be either 'drop_samples' to remove samples with missing values, 'drop_features' to remove features (columns) with missing values, or 'replace' to replace all missing values with the nan_replace_value. Missing values are None and np.nan.</p>
 </li>
 <li>
-<p><strong><code>nan_replace_value</code></strong> : <code>any</code> </p>
+<p><strong><code>nan_replace_value</code></strong> : <code>any</code></p>
 <p><em>Default: 0.0</em></p>
 <p>The value used to replace missing values with. Only applicable when nan_strategy is set to 'replace'</p>
 </li>
@@ -1124,7 +1109,7 @@ present in the data-set</p>
 <p>where <span><span class="MathJax_Preview">S(X)</span><script type="math/tex">S(X)</script></span> is the entropy of <span><span class="MathJax_Preview">X</span><script type="math/tex">X</script></span> and <span><span class="MathJax_Preview">S(X|Y)</span><script type="math/tex">S(X|Y)</script></span> is the <a href="#conditional_entropy">conditional entropy</a> of <span><span class="MathJax_Preview">X</span><script type="math/tex">X</script></span> given <span><span class="MathJax_Preview">Y</span><script type="math/tex">Y</script></span>.</p>
 <p>This is the uncertainty of x given y: value is on the range of [0,1] - where 0 means y provides no information about
 x, and 1 means y provides full information about x.
-This is an asymmetric coefficient: <span><span class="MathJax_Preview">U(x,y) \neq U(y,x)</span><script type="math/tex">U(x,y) \neq U(y,x)</script></span>. Read more on 
+This is an asymmetric coefficient: <span><span class="MathJax_Preview">U(x,y) \neq U(y,x)</span><script type="math/tex">U(x,y) \neq U(y,x)</script></span>. Read more on
 <a href="https://en.wikipedia.org/wiki/Uncertainty_coefficient">Wikipedia</a>.</p>
 <ul>
 <li>
@@ -1141,7 +1126,7 @@ This is an asymmetric coefficient: <span><span class="MathJax_Preview">U(x,y) \n
 <p>How to handle missing values: can be either 'drop' to remove samples with missing values, or 'replace' to replace all missing values with the nan_replace_value. Missing values are None and np.nan.</p>
 </li>
 <li>
-<p><strong><code>nan_replace_value</code></strong> : <code>any</code> </p>
+<p><strong><code>nan_replace_value</code></strong> : <code>any</code></p>
 <p><em>Default: 0.0</em></p>
 <p>The value used to replace missing values with. Only applicable when nan_strategy is set to 'replace'.</p>
 </li>

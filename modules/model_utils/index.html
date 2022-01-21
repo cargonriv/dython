@@ -556,48 +556,48 @@ more the positive and negative distributions' center-of-mass are closer to 1 and
 </li>
 <li>
 <p><strong><code>ax</code></strong> : matplotlib ax</p>
-<p><em>Default = None</em></p>
+<p><em>Default: None</em></p>
 <p>Matplotlib Axis on which the curves will be plotted</p>
 </li>
 <li>
 <p><strong><code>figsize</code></strong> : <code>(int,int)</code> or <code>None</code></p>
-<p><em>Default = None</em></p>
+<p><em>Default: None</em></p>
 <p>a Matplotlib figure-size tuple. If <code>None</code>, falls back to Matplotlib's
 default. Only used if <code>ax=None</code></p>
 </li>
 <li>
-<p><strong><code>colors</code></strong> : list of Matplotlib color strings </p>
-<p><em>Default = <code>('darkorange', 'b')</code></em></p>
+<p><strong><code>colors</code></strong> : list of Matplotlib color strings</p>
+<p><em>Default: <code>('darkorange', 'b')</code></em></p>
 <p>List of colors to be used for the plotted curves</p>
 </li>
 <li>
-<p><strong><code>title</code></strong> : string or <code>None</code> </p>
-<p><em>Default = None</em></p>
+<p><strong><code>title</code></strong> : string or <code>None</code></p>
+<p><em>Default: None</em></p>
 <p>Plotted graph title. If <code>None</code>, default title is used</p>
 </li>
 <li>
 <p><strong><code>xlim</code></strong> : <code>(float, float)</code></p>
-<p><em>Default = (0.,1.)</em></p>
+<p><em>Default: (0.,1.)</em></p>
 <p>X-axis limits.</p>
 </li>
 <li>
 <p><strong><code>ylim</code></strong> : <code>(float,float)</code></p>
-<p><em>Default = (0.,1.)</em></p>
+<p><em>Default: (0.,1.)</em></p>
 <p>Y-axis limits.</p>
 </li>
 <li>
 <p><strong><code>fmt</code></strong> : <code>string</code></p>
-<p><em>Default = '.2f'</em></p>
+<p><em>Default: '.2f'</em></p>
 <p>String formatting of displayed numbers.</p>
 </li>
 <li>
 <p><strong><code>lw</code></strong> : <code>int</code></p>
-<p><em>Default = 2</em></p>
+<p><em>Default: 2</em></p>
 <p>Line-width.</p>
 </li>
 <li>
 <p><strong><code>legend</code></strong>: <code>string</code> or <code>None</code></p>
-<p><em>Default = 'best'</em></p>
+<p><em>Default: 'best'</em></p>
 <p>A Matplotlib legend location string. See Matplotlib documentation for possible options</p>
 </li>
 <li>
@@ -606,14 +606,14 @@ default. Only used if <code>ax=None</code></p>
 </li>
 <li>
 <p><strong><code>filename</code></strong>: <code>string</code> or <code>None</code></p>
-<p><em>Default = None</em></p>
+<p><em>Default: None</em></p>
 <p>If not None, plot will be saved to the given file name.</p>
 </li>
 </ul>
 <p><strong>Returns:</strong> A dictionary of the following keys:</p>
 <ul>
 <li>
-<p><code>abc</code>: area between curves </p>
+<p><code>abc</code>: area between curves</p>
 </li>
 <li>
 <p><code>ks_stat</code>: computed statistic of the KS test</p>
@@ -631,13 +631,13 @@ default. Only used if <code>ax=None</code></p>
 <p><code>metric_graph(y_true, y_pred, metric, micro=True, macro=True, eoptimal_threshold=True, class_names=None, colors=None, ax=None, figsize=None, xlim=(0.,1.), ylim=(0.,1.02), lw=2, ls='-', ms=10, fmt='.2f', title=None, filename=None, force_multiclass=False)</code></p>
 <p>Plot a metric graph of predictor's results (including AUC scores), where each
 row of y_true and y_pred represent a single example.</p>
-<p><strong>ROC:</strong> 
+<p><strong>ROC:</strong>
 Plots true-positive rate as a function of the false-positive rate of the positive label in a binary classification,
-where <span><span class="MathJax_Preview">TPR = TP / (TP + FN)</span><script type="math/tex">TPR = TP / (TP + FN)</script></span> and <span><span class="MathJax_Preview">FPR = FP / (FP + TN)</span><script type="math/tex">FPR = FP / (FP + TN)</script></span>. A naive algorithm will display a linear line going from 
+where <span><span class="MathJax_Preview">TPR = TP / (TP + FN)</span><script type="math/tex">TPR = TP / (TP + FN)</script></span> and <span><span class="MathJax_Preview">FPR = FP / (FP + TN)</span><script type="math/tex">FPR = FP / (FP + TN)</script></span>. A naive algorithm will display a linear line going from
 (0,0) to (1,1), therefore having an area under-curve (AUC) of 0.5.</p>
-<p><strong>Precision-Recall:</strong> 
-Plots precision as a function of recall of the positive label in a binary classification, where 
-<span><span class="MathJax_Preview">Precision = TP / (TP + FP)</span><script type="math/tex">Precision = TP / (TP + FP)</script></span> and <span><span class="MathJax_Preview">Recall = TP / (TP + FN)</span><script type="math/tex">Recall = TP / (TP + FN)</script></span>. A naive algorithm will display a horizontal linear 
+<p><strong>Precision-Recall:</strong>
+Plots precision as a function of recall of the positive label in a binary classification, where
+<span><span class="MathJax_Preview">Precision = TP / (TP + FP)</span><script type="math/tex">Precision = TP / (TP + FP)</script></span> and <span><span class="MathJax_Preview">Recall = TP / (TP + FN)</span><script type="math/tex">Recall = TP / (TP + FN)</script></span>. A naive algorithm will display a horizontal linear
 line with precision of the ratio of positive examples in the dataset.</p>
 <p>Based on <a href="http://scikit-learn.org/stable/auto_examples/model_selection/plot_roc.html">scikit-learn examples</a> (as was seen on April 2018):</p>
 <ul>
@@ -645,9 +645,9 @@ line with precision of the ratio of positive examples in the dataset.</p>
 <p><strong><code>y_true</code></strong> : <code>list / NumPy ndarray</code></p>
 <p>The true classes of the predicted data.
 If only one or two columns exist, the data is treated as a binary
-classification (see input example below). 
-If there are more than 2 columns, each column is considered a 
-unique class, and a ROC graph and AUC score will be computed for each. </p>
+classification (see input example below).
+If there are more than 2 columns, each column is considered a
+unique class, and a ROC graph and AUC score will be computed for each.</p>
 </li>
 <li>
 <p><strong><code>y_pred</code></strong> : <code>list / NumPy ndarray</code></p>
@@ -660,80 +660,80 @@ unique class, and a ROC graph and AUC score will be computed for each. </p>
 </li>
 <li>
 <p><strong><code>micro</code></strong> : <code>Boolean</code></p>
-<p><em>Default = True</em></p>
+<p><em>Default: True</em></p>
 <p>Whether to calculate a Micro graph (not applicable for binary cases)</p>
 </li>
 <li>
 <p><strong><code>macro</code></strong> : <code>Boolean</code></p>
-<p><em>Default = True</em></p>
+<p><em>Default: True</em></p>
 <p>Whether to calculate a Macro graph (ROC metric only, not applicable for binary cases)</p>
 </li>
 <li>
-<p><strong><code>eopt</code></strong> : <code>Boolean</code> </p>
-<p><em>Default = True</em></p>
+<p><strong><code>eopt</code></strong> : <code>Boolean</code></p>
+<p><em>Default: True</em></p>
 <p>Whether to calculate and display the estimated-optimal threshold
 for each metric graph. For ROC curves, the estimated-optimal threshold is the closest
 computed threshold with (fpr,tpr) values closest to (0,1). For PR curves, it is
 the closest one to (1,1) (perfect recall and precision)</p>
 </li>
 <li>
-<p><strong><code>class_names</code></strong>: <code>list</code> or <code>string</code> </p>
-<p><em>Default = None</em></p>
-<p>Names of the different classes. In a multi-class classification, the 
+<p><strong><code>class_names</code></strong>: <code>list</code> or <code>string</code></p>
+<p><em>Default: None</em></p>
+<p>Names of the different classes. In a multi-class classification, the
 order must match the order of the classes probabilities in the input
-data. In a binary classification, can be a string or a list. If a list, 
+data. In a binary classification, can be a string or a list. If a list,
 only the last element will be used.</p>
 </li>
 <li>
 <p><strong><code>colors</code></strong> : list of Matplotlib color strings or <code>None</code></p>
-<p><em>Default = None</em></p>
+<p><em>Default: None</em></p>
 <p>List of colors to be used for the plotted curves. If <code>None</code>, falls back
 to a predefined default.</p>
 </li>
 <li>
-<p><strong><code>ax</code></strong> : matplotlib <code>ax</code> </p>
-<p><em>Default = None</em></p>
+<p><strong><code>ax</code></strong> : matplotlib <code>ax</code></p>
+<p><em>Default: None</em></p>
 <p>Matplotlib Axis on which the curves will be plotted</p>
 </li>
 <li>
 <p><strong><code>figsize</code></strong> : <code>(int,int)</code> or <code>None</code></p>
-<p><em>Default = None</em></p>
+<p><em>Default: None</em></p>
 <p>A Matplotlib figure-size tuple. If <code>None</code>, falls back to Matplotlib's
 default. Only used if <code>ax=None</code>.</p>
 </li>
 <li>
 <p><strong><code>xlim</code></strong> : <code>(float, float)</code></p>
-<p><em>Default = (0.,1.)</em></p>
+<p><em>Default: (0.,1.)</em></p>
 <p>X-axis limits.</p>
 </li>
 <li>
 <p><strong><code>ylim</code></strong> : <code>(float,float)</code></p>
-<p><em>Default = (0.,1.02)</em></p>
+<p><em>Default: (0.,1.02)</em></p>
 <p>Y-axis limits.</p>
 </li>
 <li>
 <p><strong><code>lw</code></strong> : <code>int</code></p>
-<p><em>Default = 2</em></p>
+<p><em>Default: 2</em></p>
 <p>Line-width.</p>
 </li>
 <li>
 <p><strong><code>ls</code></strong> : <code>string</code></p>
-<p><em>Default = '-'</em></p>
+<p><em>Default: '-'</em></p>
 <p>Matplotlib line-style string</p>
 </li>
 <li>
 <p><strong><code>ms</code></strong> : <code>int</code></p>
-<p><em>Default = 10</em></p>
+<p><em>Default: 10</em></p>
 <p>Marker-size.</p>
 </li>
 <li>
 <p><strong><code>fmt</code></strong> : <code>string</code></p>
-<p><em>Default = '.2f'</em></p>
+<p><em>Default: '.2f'</em></p>
 <p>String formatting of displayed AUC and threshold numbers.</p>
 </li>
 <li>
 <p><strong><code>legend</code></strong>: <code>string</code> or <code>None</code></p>
-<p><em>Default = 'best'</em></p>
+<p><em>Default: 'best'</em></p>
 <p>A Matplotlib legend location string. See Matplotlib documentation for possible options</p>
 </li>
 <li>
@@ -742,17 +742,17 @@ default. Only used if <code>ax=None</code>.</p>
 </li>
 <li>
 <p><strong><code>title</code></strong>: <code>string</code> or <code>None</code></p>
-<p><em>Default = None</em></p>
+<p><em>Default: None</em></p>
 <p>Plotted graph title. If None, default title is used.</p>
 </li>
 <li>
 <p><strong><code>filename</code></strong>: <code>string</code> or <code>None</code></p>
-<p><em>Default = None</em></p>
+<p><em>Default: None</em></p>
 <p>If not None, plot will be saved to the given file name.</p>
 </li>
 <li>
 <p><strong><code>force_multiclass</code></strong>: <code>Boolean</code></p>
-<p><em>Default = False</em></p>
+<p><em>Default: False</em></p>
 <p>Only applicable if <code>y_true</code> and <code>y_pred</code> have two columns. If so,
 consider the data as a multiclass data rather than binary (useful when plotting
 curves of different models one against the other)</p>
@@ -761,14 +761,14 @@ curves of different models one against the other)</p>
 <p><strong>Returns:</strong> A dictionary, one key for each class. Each value is another dictionary,
 holding AUC and eOpT values.</p>
 <p><strong>Example:</strong> See <a href="../../getting_started/examples/">examples</a>.</p>
-<p><strong>Binary Classification Input Example:</strong> 
-Consider a data-set of two data-points where the true class of the first line 
-is class 0, which was predicted with a probability of 0.6, and the second line's 
-true class is 1, with predicted probability of 0.8. 
-<div class="highlight"><pre><span></span><code><span class="c1"># First option: </span>
-<span class="o">&gt;&gt;</span> <span class="n">metric_graph</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">y_pred</span><span class="o">=</span><span class="p">[</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.8</span><span class="p">],</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;roc&#39;</span><span class="p">)</span> 
+<p><strong>Binary Classification Input Example:</strong>
+Consider a data-set of two data-points where the true class of the first line
+is class 0, which was predicted with a probability of 0.6, and the second line's
+true class is 1, with predicted probability of 0.8.
+<div class="highlight"><pre><span></span><code><span class="c1"># First option:</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">metric_graph</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="n">y_pred</span><span class="o">=</span><span class="p">[</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.8</span><span class="p">],</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;roc&#39;</span><span class="p">)</span>
 <span class="c1"># Second option:</span>
-<span class="o">&gt;&gt;</span> <span class="n">metric_graph</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="n">y_pred</span><span class="o">=</span><span class="p">[[</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.4</span><span class="p">],[</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.8</span><span class="p">]],</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;roc&#39;</span><span class="p">)</span>
+<span class="o">&gt;&gt;&gt;</span> <span class="n">metric_graph</span><span class="p">(</span><span class="n">y_true</span><span class="o">=</span><span class="p">[[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]],</span> <span class="n">y_pred</span><span class="o">=</span><span class="p">[[</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">0.4</span><span class="p">],[</span><span class="mf">0.2</span><span class="p">,</span><span class="mf">0.8</span><span class="p">]],</span> <span class="n">metric</span><span class="o">=</span><span class="s1">&#39;roc&#39;</span><span class="p">)</span>
 <span class="c1"># Both yield the same result</span>
 </code></pre></div></p>
 <hr />
@@ -787,7 +787,7 @@ importance according to the classifier, from the most important to the least.</p
 </li>
 <li>
 <p><strong><code>precision</code></strong> : <code>int</code></p>
-<p><em>Default = 4</em></p>
+<p><em>Default: 4</em></p>
 <p>Precision of feature importance.</p>
 </li>
 </ul>
